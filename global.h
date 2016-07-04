@@ -19,6 +19,11 @@ namespace gbl {
 
     // unwind to end
     bool end;
+
+      ////////////////////////////
+    // should be defined in main
+    // sets game_level to previous state
+    void gl_back ();
 }
 
 #endif

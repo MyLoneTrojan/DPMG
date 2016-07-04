@@ -2,8 +2,12 @@
 #define ATTRI_H_INCLUDED
 
 /// STD
+#include <sstream>
+#include <vector>
+#include <string>
 
 /// SFML
+
 
 /// PROJECT
 #include "global.h"
@@ -21,17 +25,38 @@ namespace attr {
     std::vector<float> fri_close;
 
     /// Neatly print out all attributes
-    void print_attr () {
+    std::string print_attr () {
         using namespace attr;
 
-        std::cout << "Mood: "      << mood    << "\tEnergy: " << energy
-                  << "\tClarity: " << clarity << "\tSocial: " << social
-                  << "\nLibido: "  << libido  << "\tMotiv: "  << motiv
-                  << "\tSkill: "   << skill   << "\tTime: "   << time;
+        std::string output;
+
+        auto to_string [&] (float num) {std::stringstream ostream; ostream << num; ostream >> output;}
+
+        output = "Mood: ";
+        to_string(mood);
+        output += "\tEnergy: ";
+        to_string(energy);
+        output += "\tClarity: ";
+        to_string(clarity);
+        output += "\tSocial: ";
+        to_string(social);
+        output += "\n\nLibido: ";
+        to_string(libido);
+        output += "\tMotiv: ";
+        to_string(motiv);
+        output += "\tSkill: ";
+        to_string(skill);
+        output += "\tTime: ";
+
+        return output;
+        //std::cout << "Mood: "      << mood    << "\tEnergy: " << energy
+        //          << "\tClarity: " << clarity << "\tSocial: " << social
+        //          << "\n\nLibido: "  << libido  << "\tMotiv: "  << motiv
+        //          << "\tSkill: "   << skill   << "\tTime: "   << time;
     }
 
 
-    #define attr_mk_inbound (a) { if (a < a_min) a = a_min; else if (a > a_max) a = a_max; }
+    #define attr_mk_inbound(a) { if (a < a ## _min) a = a ## _min; else if (a > a ## _max) a = a ## _max; }
 
     inline void time_adv (const float& dt) {
         time += dt;

@@ -1,7 +1,15 @@
 #ifndef COMP_H
 #define COMP_H
 
+/// STD
+#include <iostream>
+#include <sstream>
+#include <string>
 
+/// SFML
+
+/// PROJECT
+#include "global.h"
 
 namespace comp {
 
@@ -47,8 +55,57 @@ namespace comp {
 
         time_adv(dt);
     }
-    void game_hard (float dt);
+    void game_hard (float dt) {
+        game_easy(dt);
+    }
 
     void learn (float dt); // add topic as parameter
+
+    /// MAIN function
+    void comp() {
+        std::cout << "\n\nComp: chat, game, or return?\n>";
+
+        std::string activity;
+
+        while (activity != "chat" && activity != "game" && activity != "return")
+            std::getline(std::cin, activity);
+
+        std::cout << "For how long (minutes):\n>";
+
+        float min_t;
+        using namespace min;
+        switch (activity[0])
+        {
+        case 'c':
+            min_t = CHAT_T;
+            break;
+        case 'g':
+            min_t = activity[1] == 'e' ? GAME_E_T : GAME_H_T;
+            break;
+        case 'r':
+            gbl::gl_back();
+            return;
+        }
+
+        float dt;
+        for (std::string input; ; ) {
+            std::getline(std::cin, input);
+
+            if (!(std::stringstream(input) >> dt))
+                std::cout << "Error: unrecognized number\n>";
+            else if (dt < min_t)
+                std::cout << "Error: number too low\n\tMin: " << min_t << "\n>";
+            else
+                break;
+        }
+
+        if (min_t == min::CHAT_T)
+            chat(dt);
+        else if (min_t == min::GAME_E_T)
+            game_easy(dt);
+        else if (min_t == min::GAME_H_T)
+            game_hard(dt);
+        std::cout << "\n----------------\n";
+    }
 }
 #endif // COMP_H
