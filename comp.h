@@ -1,8 +1,9 @@
 #ifndef COMP_H
 #define COMP_H
 
+
+
 namespace comp {
-    const int COMP = 1;
 
     /***
      * Activities
