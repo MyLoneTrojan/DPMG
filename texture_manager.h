@@ -13,7 +13,7 @@
 /// LOCAL
 #include "Error.h"
 
-namespace gbl {
+namespace txmg {
 
 struct TexLoc;
 struct TexPos;
@@ -59,7 +59,7 @@ class  TexPtr;  // defined in this file
     TexPos isLoaded (const std::string&);
 
         //////////////////////////////
-        /// \param file path of texutre to creat
+        /// \param file path of texture to create
         ///     \# if texture with the same source file is found, then its position is returned
         ///
         /// \return position of created object in tex

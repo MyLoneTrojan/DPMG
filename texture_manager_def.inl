@@ -19,7 +19,7 @@
         /// check if file is loaded
         /// \param file path
         /// \return position (-1 means not loaded)
-    gbl::TexPos gbl::isLoaded (const std::string& file) {
+    txmg::TexPos txmg::isLoaded (const std::string& file) {
         TexPos param;
         param.it = tex.begin();
         param.good = false;
@@ -37,7 +37,7 @@
                         //////////////////////////////
                         /// \param position in tex
                         /// \return texture of object in tex
-                    sf::Texture& gbl::getTex (std::size_t n) {
+                    sf::Texture& txmg::getTex (std::size_t n) {
                         return tex.at(n).tex;
                     }
     */
@@ -48,7 +48,7 @@
         ///     \# if texture with the same source file is found, then its position is returned
         ///
         /// \return position of created object in tex
-    gbl::TexPos gbl::makeTex (const std::string& file) {
+    txmg::TexPos txmg::makeTex (const std::string& file) {
         TexPos pos = isLoaded(file);
 
         if (pos.good)
@@ -68,7 +68,7 @@
 
         //////////////////////////////
         /// \param index of element to be deleted from tex
-    void gbl::remove (gbl::TexPos index) {
+    void txmg::remove (txmg::TexPos index) {
         if (!index.good || index.it == tex.end())
             return; //invalid iterator
 
@@ -81,12 +81,12 @@
     ///
     //////////////
 
-    gbl::TexLoc::TexLoc (const std::string& p) {
+    txmg::TexLoc::TexLoc (const std::string& p) {
         path = p;
         error = loadTex(p);
     }
 
-    err::Error gbl::TexLoc::loadTex (const std::string& p) {
+    err::Error txmg::TexLoc::loadTex (const std::string& p) {
         err::Error param;
         if (!tex.loadFromFile(p)) {
             param.setLine(__LINE__).setFile(__FILE__).setText("Invalid File Name.");
@@ -113,7 +113,7 @@
         ////////////
 
             /// deletion procedure for a sf::Texture in the global scope
-    void gbl::TexPtr::del (TexPos* tp) {
+    void txmg::TexPtr::del (TexPos* tp) {
         if (tp != nullptr && tp->good)
             remove(*tp);
         delete tp;
@@ -127,11 +127,11 @@
 
             //////////////
         /// default -- set deleter as TexPtr::del
-    gbl::TexPtr::TexPtr () : ptr(nullptr, del) {
+    txmg::TexPtr::TexPtr () : ptr(nullptr, del) {
         /*--- EMPTY ---*/
     };
 
-    gbl::TexPtr::TexPtr (const TexPos& tp) {
+    txmg::TexPtr::TexPtr (const TexPos& tp) {
         loadTex(tp);
     }
 
@@ -143,7 +143,7 @@
 
             ////////////
         /// set TexPos to obtain sf::texture* and to later delete it from the global scope
-    void gbl::TexPtr::loadTex (TexPos tp) {
+    void txmg::TexPtr::loadTex (TexPos tp) {
         ptr = std::shared_ptr<TexPos>(new TexPos(tp), del);
         tex_p = tp.good ? &tp.it->tex : nullptr;
     }
@@ -155,12 +155,12 @@
         ////////////////
 
         /// Get internal TexPos
-    gbl::TexPos gbl::TexPtr::getTexPos () {
+    txmg::TexPos txmg::TexPtr::getTexPos () {
         return *ptr;
     }
 
         /// Get internal sf::Texture*
-    gbl::TexPtr::operator sf::Texture* () {
+    txmg::TexPtr::operator sf::Texture* () {
         return tex_p;
     }
 

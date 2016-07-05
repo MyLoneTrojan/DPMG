@@ -30,23 +30,33 @@ int main () {
     sf::Time time_step    = sf::milliseconds( 30);
     /////////////////////////
 
-    gbl::game_level = comp::comp;
+    gbl::game_level = room::room;
 
     // game loop
     while (!gbl::end && window.isOpen()) {
 
-        frame_dt += game_clock.restart();
+        frame_dt += game_clock.restart(); // add missed time
 
-        if (frame_dt < max_frame_dt)
+        if (frame_dt < max_frame_dt)      // check against max
             frame_dt = max_frame_dt;
 
+        /// GAME LOOP
         for (; frame_dt >= time_step; frame_dt -= time_step) {
-            // do game
             attr::print_attr();
             gbl::game_level();
         }
 
         // intermediate draw?
+
+        /// handle events
+        for (sf::Event event; window.pollEvent(event);) {
+            switch (event.type)
+            {
+            case sf::Event::Closed:
+                window.close();
+                break;
+            }
+        }
 
         /// DISPLAY
         window.clear();
