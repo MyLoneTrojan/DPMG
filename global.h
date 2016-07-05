@@ -3,12 +3,15 @@
 
 /// STD
 #include <random>
+#include <vector>
 #include <functional>
 
 /// SFML
+#include <SFML/Graphics.hpp>
 
 /// PROJECT
-/*--- purposely empty ---*/
+#include "Error.h"  // for err::Error reports
+#include "texture_manager.h"    // for garbage collection and draw queue
 
 namespace gbl {
     // for consistent, predictable 'random' numbers
@@ -24,6 +27,8 @@ namespace gbl {
     // should be defined in main
     // sets game_level to previous state
     void gl_back ();
+
+    std::vector<sf::Drawable*> to_draw_p;
 }
 
 #endif

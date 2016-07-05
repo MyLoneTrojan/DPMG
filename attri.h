@@ -25,34 +25,13 @@ namespace attr {
     std::vector<float> fri_close;
 
     /// Neatly print out all attributes
-    std::string print_attr () {
+    void print_attr () {
         using namespace attr;
 
-        std::string output;
-
-        auto to_string [&] (float num) {std::stringstream ostream; ostream << num; ostream >> output;}
-
-        output = "Mood: ";
-        to_string(mood);
-        output += "\tEnergy: ";
-        to_string(energy);
-        output += "\tClarity: ";
-        to_string(clarity);
-        output += "\tSocial: ";
-        to_string(social);
-        output += "\n\nLibido: ";
-        to_string(libido);
-        output += "\tMotiv: ";
-        to_string(motiv);
-        output += "\tSkill: ";
-        to_string(skill);
-        output += "\tTime: ";
-
-        return output;
-        //std::cout << "Mood: "      << mood    << "\tEnergy: " << energy
-        //          << "\tClarity: " << clarity << "\tSocial: " << social
-        //          << "\n\nLibido: "  << libido  << "\tMotiv: "  << motiv
-        //          << "\tSkill: "   << skill   << "\tTime: "   << time;
+        std::cout << "Mood: "       << mood    << "\tEnergy: " << energy
+                  << "\tClarity: "  << clarity << "\tSocial: " << social
+                  << "\n\nLibido: " << libido  << "\tMotiv: "  << motiv
+                  << "\tSkill: "    << skill   << "\tTime: "   << time;
     }
 
 

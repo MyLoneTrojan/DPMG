@@ -4,14 +4,12 @@
 #include <string>
 
 /// SFML
-//#include <SFML/Graphics.hpp>
-
-/// MULTIPLE CONSOLE WINDOWS
-#include "C:\Users\222222day\cpp\Source\ExtraConsole\server.h"
+#include <SFML/Graphics.hpp>
 
 /// PROJECT
 #include "attri.h"
 #include "comp.h"
+#include "file_paths.h"
 
 void gbl::gl_back () {
     end = true;
@@ -19,19 +17,45 @@ void gbl::gl_back () {
 
 int main () {
 
-    CConsoleLogger console_log;
-    console_log.create("Hello World!");
+        //visual window
+    sf::RenderWindow window (sf::VideoMode(1366, 768), "DPMG", sf::Style::Titlebar | sf::Style::Close);
 
-    std::cout << "Hello World!\n\n";
+        ///////////////////
+    /// TIME STEP variables
+    sf::Clock game_clock;
+
+    sf::Time frame_dt     = sf::Time::Zero;
+    sf::Time max_frame_dt = sf::milliseconds(100);
+
+    sf::Time time_step    = sf::milliseconds( 30);
+    /////////////////////////
 
     gbl::game_level = comp::comp;
 
     // game loop
-    while (!gbl::end) {
-        std::string input;
+    while (!gbl::end && window.isOpen()) {
 
-        console_log.printf(attr::print_attr());
-        gbl::game_level();
+        frame_dt += game_clock.restart();
+
+        if (frame_dt < max_frame_dt)
+            frame_dt = max_frame_dt;
+
+        for (; frame_dt >= time_step; frame_dt -= time_step) {
+            // do game
+            attr::print_attr();
+            gbl::game_level();
+        }
+
+        // intermediate draw?
+
+        /// DISPLAY
+        window.clear();
+
+        // draw queue
+        for (sf::Drawable* obj_p : gbl::to_draw_p)
+            window.draw(*obj_p);
+
+        window.display();
     }
 
     return 0;

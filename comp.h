@@ -67,11 +67,11 @@ namespace comp {
 
         std::string activity;
 
+            // get activity choice
         while (activity != "chat" && activity != "game" && activity != "return")
             std::getline(std::cin, activity);
 
-        std::cout << "For how long (minutes):\n>";
-
+            // parse choice - get minimum time
         float min_t;
         using namespace min;
         switch (activity[0])
@@ -87,6 +87,9 @@ namespace comp {
             return;
         }
 
+        std::cout << "For how long (minutes):\n>";
+
+            // get dt from input
         float dt;
         for (std::string input; ; ) {
             std::getline(std::cin, input);
