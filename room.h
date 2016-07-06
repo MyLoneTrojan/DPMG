@@ -41,12 +41,20 @@ namespace room {
         }
 
         // set textures into sprites
-        for (int n = 0; n < spr_p.size(); ++n) {
+        for (int n = 0; n < spr_p.size(); ++n)
             spr_p[n].setTexture(sf::Texture*(tx_p[n]));
-        }
+
+        // position sprites
+        spr_p[0].setPosition(  0,   0);
+        spr_p[1].setPosition(100, 100);
+        spr_p[1].setPosition(500, 100);
     }
 
     void room_gui_close () {
+        spr_p.clear();
+
+        for (int n = 0; n < TX_P_SIZE; ++n)
+            tx_p[n].clear();
     }
 
     void room () {

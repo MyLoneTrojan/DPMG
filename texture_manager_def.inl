@@ -119,6 +119,12 @@
         delete tp;
     }
 
+            /// clear all variables as if new
+    void txmg::TexPtr::clear () {
+        ptr.reset();
+        tex_p = nullptr;
+    }
+
         //////////////
         ///
         /// Constructor

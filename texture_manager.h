@@ -123,6 +123,8 @@ class  TexPtr;  // defined in this file
 
         TexPos getTexPos ();
 
+        void clear ();
+
         operator sf::Texture* ();
     };
 
