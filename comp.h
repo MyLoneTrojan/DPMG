@@ -7,9 +7,11 @@
 #include <string>
 
 /// SFML
+#include <SFML/Graphics.hpp>
 
 /// PROJECT
 #include "global.h"
+#include "file_paths.h"
 
 namespace comp {
 
@@ -26,6 +28,18 @@ namespace comp {
         const float GAME_E_T = 20.f;
         const float GAME_H_T = 40.f;
         const float LEARN_T  = 30.f;
+    }
+
+    sf::String          input;
+    sf::RectangleShape* box_;
+    sf::Text*           text_;
+    sf::Font*           font;
+
+    void event_handler (sf::Event& event) {
+        if (event.type != sf::Event::TextEntered)
+            return;
+
+        input += sf::String(event.text.unicode);
     }
 
     void chat (float dt) {
@@ -61,54 +75,34 @@ namespace comp {
 
     void learn (float dt); // add topic as parameter
 
-    /// MAIN function
-    void comp() {
-        std::cout << "\n\nComp: chat, game, or return?\n>";
 
-        std::string activity;
+    void comp_gui_load () {
+        box_  = new sf::RectangleShape;
+        text_ = new sf::Text;
+        font  = new sf::Font;
 
-            // get activity choice
-        while (activity != "chat" && activity != "game" && activity != "return")
-            std::getline(std::cin, activity);
-
-            // parse choice - get minimum time
-        float min_t;
-        using namespace min;
-        switch (activity[0])
-        {
-        case 'c':
-            min_t = CHAT_T;
-            break;
-        case 'g':
-            min_t = activity[1] == 'e' ? GAME_E_T : GAME_H_T;
-            break;
-        case 'r':
-            gbl::gl_back();
+        if (!font->loadFromFile(fp::framd_font)) {
+            gbl::end = true;
             return;
         }
 
-        std::cout << "For how long (minutes):\n>";
+        box_->setPosition(800, 500);
+        box_->setFillColor(sf::Color::Black);
+        box_->setSize(sf::Vector2f(1000, 50));
 
-            // get dt from input
-        float dt;
-        for (std::string input; ; ) {
-            std::getline(std::cin, input);
+        text_->setPosition(820, 490);
+        text_->setColor(sf::Color::White);
+        text_->setFont(*font);
+    }
 
-            if (!(std::stringstream(input) >> dt))
-                std::cout << "Error: unrecognized number\n>";
-            else if (dt < min_t)
-                std::cout << "Error: number too low\n\tMin: " << min_t << "\n>";
-            else
-                break;
-        }
+    void comp_gui_close () {
+        delete box_;
+        delete text_;
+    }
 
-        if (min_t == min::CHAT_T)
-            chat(dt);
-        else if (min_t == min::GAME_E_T)
-            game_easy(dt);
-        else if (min_t == min::GAME_H_T)
-            game_hard(dt);
-        std::cout << "\n----------------\n";
+    /// MAIN function
+    void comp(sf::Window& window) {
+
     }
 }
 #endif // COMP_H

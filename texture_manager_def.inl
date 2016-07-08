@@ -166,8 +166,12 @@
     }
 
         /// Get internal sf::Texture*
-    txmg::TexPtr::operator sf::Texture* () {
+    sf::Texture* txmg::TexPtr::getBase () {
         return tex_p;
+    }
+
+    sf::Texture& txmg::TexPtr::getBaseRef () {
+        return (*getBase());
     }
 
 

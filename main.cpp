@@ -9,16 +9,22 @@
 /// PROJECT
 #include "attri.h"
 #include "comp.h"
+#include "room.h"
 #include "file_paths.h"
 
 void gbl::gl_back () {
     end = true;
 }
 
-int main () {
+void print_err (const err::Error& err) {
+    std::cout << "Error " << err.getFile() << ": " << err.getLine() << "-> "  << err.what();
+}
 
+void nothing (sf::Event&) {};
+
+int main () {
         //visual window
-    sf::RenderWindow window (sf::VideoMode(1366, 768), "DPMG", sf::Style::Titlebar | sf::Style::Close);
+    sf::RenderWindow window (sf::VideoMode(1600, 869), "DPMG", sf::Style::Titlebar | sf::Style::Close);
 
         ///////////////////
     /// TIME STEP variables
@@ -30,7 +36,14 @@ int main () {
     sf::Time time_step    = sf::milliseconds( 30);
     /////////////////////////
 
+    err::emergency_terminate = room::room_gui_load();
+    if (err::emergency_terminate.bad()) {
+        print_err(err::emergency_terminate);
+        return -1;
+    }
+
     gbl::game_level = room::room;
+    gbl::event_handle = nothing;
 
     // game loop
     while (!gbl::end && window.isOpen()) {
@@ -40,10 +53,15 @@ int main () {
         if (frame_dt < max_frame_dt)      // check against max
             frame_dt = max_frame_dt;
 
+
         /// GAME LOOP
         for (; frame_dt >= time_step; frame_dt -= time_step) {
+            //attr::print_attr();
+            gbl::game_level(window);
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Slash)) {
             attr::print_attr();
-            gbl::game_level();
         }
 
         // intermediate draw?
@@ -55,6 +73,8 @@ int main () {
             case sf::Event::Closed:
                 window.close();
                 break;
+            default:
+                gbl::event_handle(event);
             }
         }
 

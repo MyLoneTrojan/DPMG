@@ -1,5 +1,5 @@
-#ifndef GLOBAL_H_INCLUDED
-#define GLOBAL_H_INCLUDED
+#ifndef TEXTURE_MANAGER_H_INCLUDED
+#define TEXTURE_MANAGER_H_INCLUDED
 
 /// API
 #include <SFML/Graphics.hpp>
@@ -125,7 +125,8 @@ class  TexPtr;  // defined in this file
 
         void clear ();
 
-        operator sf::Texture* ();
+        sf::Texture* getBase ();
+        sf::Texture& getBaseRef ();
     };
 
 }

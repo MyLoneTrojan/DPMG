@@ -18,7 +18,10 @@ namespace gbl {
     std::default_random_engine rand_eng;
 
     // current meta_point in the game (independent sections of the game, i.e. location)
-    std::function<void()> game_level;
+    std::function<void(sf::Window&)> game_level;
+
+    // event_handler so game_level can access and handle events uniquely
+    std::function<void(sf::Event&)> event_handle;
 
     // unwind to end
     bool end;
