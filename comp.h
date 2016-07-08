@@ -35,11 +35,14 @@ namespace comp {
     sf::Text*           text_;
     sf::Font*           font;
 
-    void event_handler (sf::Event& event) {
-        if (event.type != sf::Event::TextEntered)
+    void getText (sf::Event& event) {
+        if (event.type != sf::Event::TextEntered && *input.end() != '\n')
             return;
 
-        input += sf::String(event.text.unicode);
+        if ( (event.text.unicode >= 0x30 && event.text.unicode >= 0x39) || event.text.unicode == 0x2E )
+            input += sf::String(event.text.unicode);
+        else if (event.text.unicode == '\b')
+            input.erase( input.getSize()-1 );
     }
 
     void chat (float dt) {
@@ -98,11 +101,23 @@ namespace comp {
     void comp_gui_close () {
         delete box_;
         delete text_;
+        delete font;
     }
 
     /// MAIN function
     void comp(sf::Window& window) {
+        gbl::event_handle = getText;
 
+        text_->setString(input);
+
+        if (*input.end() == '\n') {
+            float dt = std::atof(input.toAnsiString().c_str());
+
+            if (dt )
+        }
+
+        gbl::to_draw_p.push_back(box_);
+        gbl::to_draw_p.push_back(text_);
     }
 }
 #endif // COMP_H
