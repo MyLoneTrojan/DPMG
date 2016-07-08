@@ -12,6 +12,7 @@
 /// PROJECT
 #include "Error.h"  // for err::Error reports
 #include "texture_manager.h"    // for garbage collection and draw queue
+#include "level_func.h"
 
 namespace gbl {
     // for consistent, predictable 'random' numbers
@@ -25,6 +26,9 @@ namespace gbl {
 
     // unwind to end
     bool end;
+
+    template <class ...T>
+    void do_nothing(T&&...) {};
 
       ////////////////////////////
     // should be defined in main

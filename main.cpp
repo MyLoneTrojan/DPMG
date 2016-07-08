@@ -60,10 +60,6 @@ int main () {
             gbl::game_level(window);
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Slash)) {
-            attr::print_attr();
-        }
-
         // intermediate draw?
 
         /// handle events
@@ -72,6 +68,10 @@ int main () {
             {
             case sf::Event::Closed:
                 window.close();
+                break;
+            case sf::Event::KeyReleased:
+                if (event.key.code == sf::Keyboard::Key::Slash)
+                attr::print_attr();
                 break;
             default:
                 gbl::event_handle(event);

@@ -87,6 +87,7 @@ namespace room {
                         break;
                     case 1:
                         std::cout << "Comp()";
+                        comp::comp_gui_load();
                         gbl::game_level = comp::comp;
                         break;
                     }
