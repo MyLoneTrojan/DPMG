@@ -34,6 +34,7 @@ namespace comp {
     char func = 0;
 
     sf::String          input;
+    sf::String          input_hint;
     sf::RectangleShape* box_;
     sf::Text*           text_;
     sf::Font*           font;
@@ -43,6 +44,10 @@ namespace comp {
     void getText_handler (sf::Event& event) {
         if (event.type != sf::Event::TextEntered)
             return;
+
+        // clear from previous error
+        if (input == "bad input")
+            input.clear();
 
         std::cout << "input\n";
         char in = char(event.text.unicode);
@@ -54,7 +59,7 @@ namespace comp {
 
         if (in == '\r') {
             dt = std::atof(input.toAnsiString().c_str());
-            input.clear();
+            input = "bad input"; // communicate to user
             std::cout << "Submit\n";
         }
 
@@ -125,15 +130,17 @@ namespace comp {
 
         /// SETUP
 
-        spr_v[0].setScale(double(869));
+        float icon_x = 100, icon_y = 100;
+
+        spr_v[0].setScale(double(869)/643, double(869)/643);
 
         spr_v[1].setPosition(10,10);
-        spr_v[1].setScale(double(350)/1024, double(350)/1024);
+        spr_v[1].setScale(double(icon_x)/1024, double(icon_y)/1024);
 
         spr_v[2].setPosition(370, 10);
 
         spr_v[3].setPosition(10, 370);
-        spr_v[3].setScale(double(350)/512, double(350)/512);
+        spr_v[3].setScale(double(icon_x)/512, double(icon_y)/512);
 
             /////////////////////
         /// text box for time input
@@ -163,6 +170,7 @@ namespace comp {
         dt = -1;
         func = 0;
         input.clear();
+        input_hint.clear();
     }
 
     /// MAIN function
@@ -227,6 +235,11 @@ namespace comp {
             gbl::to_draw_p.push_back(&obj);
 
         if (dt >= 0) {
+            if (input == "bad input")
+                text_->setColor(sf::Color::Red);
+            else if (text_->getColor() == sf::Color::Red)
+                text_->setColor(sf::Color::White);
+
             gbl::to_draw_p.push_back(box_);
             gbl::to_draw_p.push_back(text_);
         }
