@@ -34,7 +34,7 @@ namespace comp {
     char func = 0;
 
     sf::String          input;
-    sf::String          input_hint;
+    //sf::String          input_hint;
     sf::RectangleShape* box_;
     sf::Text*           text_;
     sf::Font*           font;
@@ -105,7 +105,7 @@ namespace comp {
         tx_v.resize(4);
 
         box_  = new sf::RectangleShape;
-        text_ = new sf::Text;
+        text_ = new sf::Text[2];
         font  = new sf::Font;
 
         if (!font->loadFromFile(fp::framd_font)) {
@@ -130,17 +130,21 @@ namespace comp {
 
         /// SETUP
 
+        /// Sprites
         float icon_x = 100, icon_y = 100;
+        float   og_x = 50,    og_y = 50;
+        float buff_x = 10,  buff_y = 10;
 
         spr_v[0].setScale(double(869)/643, double(869)/643);
 
-        spr_v[1].setPosition(10,10);
+        spr_v[1].setPosition(og_x, og_y);
         spr_v[1].setScale(double(icon_x)/1024, double(icon_y)/1024);
 
-        spr_v[2].setPosition(370, 10);
+        spr_v[2].setPosition(og_x+icon_x+buff_x, og_y);
+        spr_v[2].setScale(double(icon_x)/350,  double(icon_y)/350);
 
-        spr_v[3].setPosition(10, 370);
-        spr_v[3].setScale(double(icon_x)/512, double(icon_y)/512);
+        spr_v[3].setPosition(og_x+icon_x*2+buff_x*2, og_y);
+        spr_v[3].setScale(double(icon_x)/512,  double(icon_y)/512);
 
             /////////////////////
         /// text box for time input
@@ -148,18 +152,25 @@ namespace comp {
         box_->setFillColor(sf::Color::Blue);
         box_->setSize(sf::Vector2f(1600, 50));
 
+            // input
         text_->setPosition(20, 500);
         text_->setColor(sf::Color::White);
         text_->setFont(*font);
+
+            // output / hint
+        text_[0].setPosition(20, 450);
+        text_[0].setColor(sf::Color(0xF11, 0xF11, 0xF11));
+        text_[0].setFont(*font);
+        text_[0].setString("Input time for action (in minutes)");
         //////////////////////////
 
 
     }
 
     void comp_gui_close () {
-        delete box_;
-        delete text_;
-        delete font;
+        delete   box_;
+        delete[] text_;
+        delete   font;
 
         tx_v.resize(0);
         tx_v.shrink_to_fit();
@@ -170,7 +181,7 @@ namespace comp {
         dt = -1;
         func = 0;
         input.clear();
-        input_hint.clear();
+        //input_hint.clear();
     }
 
     /// MAIN function
