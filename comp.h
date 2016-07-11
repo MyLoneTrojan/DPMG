@@ -30,44 +30,96 @@ namespace comp {
         const float LEARN_T  = 30.f;
     }
 
+    namespace ret {
+        const int SUCCESS         = 0,
+                  FAIL_ENERGY     = 1,
+                  FAIL_MOTIV      = 2,
+                  FAIL_NO_FRIENDS = 3,
+                  FAIL_TIME       = 4,
+                  FAIL_SKILL      = 5;
+    }
+
     float dt = -1;
     char func = 0;
 
     sf::String          input;
-    //sf::String          input_hint;
     sf::RectangleShape* box_;
     sf::Text*           text_;
     sf::Font*           font;
     std::vector<sf::Sprite> spr_v;
     std::vector<txmg::TexPtr> tx_v;
 
+        /////////////////
+    /// Clock manipulator
+    void update_clock () {
+        const float og_x = 50, og_y = 50;
+        text_[2].setString(attr::get_clock());
+
+        sf::FloatRect c_dimen = text_[2].getGlobalBounds();
+
+        text_[2].setPosition(gbl::win_size.x - og_x - c_dimen.width, og_y);
+    }
+
+
+    /// Input of text
     void getText_handler (sf::Event& event) {
         if (event.type != sf::Event::TextEntered)
             return;
 
-        // clear from previous error
-        if (input == "bad input")
-            input.clear();
+        auto& in = event.text.unicode;
 
-        std::cout << "input\n";
-        char in = char(event.text.unicode);
-
-        if ( (in >= '0' && in <= '9') || in == '.' )
+        if ( (in >= '0' && in <= '9') || in == '.' ) {
+            if (input == "bad input") {
+                input.clear();
+                text_->setColor(sf::Color::White);
+            }
             input += sf::String(event.text.unicode);
-        else if (in == '\b')
+        } else if (in == '\b' && input.getSize() > 0)
             input.erase( input.getSize()-1 );
+        else if (in == '\r') { // enter was pressed
+            dt = std::strtof(input.toAnsiString().c_str(), nullptr);
 
-        if (in == '\r') {
-            dt = std::atof(input.toAnsiString().c_str());
-            input = "bad input"; // communicate to user
-            std::cout << "Submit\n";
+            float min;
+            switch (func)
+            {
+            case 1:
+                min = min::GAME_E_T;
+                break;
+            case 2:
+                min = min::GAME_H_T;
+                break;
+            case 3:
+                min = min::CHAT_T;
+                break;
+            }
+
+            if (input.getSize() == 0) {
+                func = 0;
+                dt = -1;
+                text_[1].setString("");
+            }
+            else if (dt < min) {
+                input = "bad input";
+                text_->setColor(sf::Color::Red);
+                dt = -1;
+            } else {
+                input.clear();
+            }
         }
 
         text_->setString(input);
     }
 
-    void chat (float dt) {
+    ///////////////////////
+    ///
+    /// ATTRIBUTE MODIFIERS
+
+    int chat (float dt) {
         using namespace attr;
+
+        // CHECK if capable
+        if (attr::fri_close.size() < 1)
+            return ret::FAIL_NO_FRIENDS;
 
         social  -= 10 * dt/30;
         mood    += 10 * dt/30;
@@ -81,9 +133,11 @@ namespace comp {
         motiv_adv(dt);
 
         time_adv(dt);
+
+        return ret::SUCCESS;
     }
 
-    void game_easy (float dt) {
+    int game_easy (float dt) {
         using namespace attr;
 
         mood *= dt * .7;
@@ -92,23 +146,28 @@ namespace comp {
         motiv_adv(dt);
 
         time_adv(dt);
+
+        return ret::SUCCESS;
     }
-    void game_hard (float dt) {
-        game_easy(dt);
+    int game_hard (float dt) {
+        return game_easy(dt);
     }
 
-    void learn (float dt); // add topic as parameter
+    int learn (float dt); // add topic as parameter
+
+    /// \ ATTRIBUTE MODIFER
+    ////////////////////////
 
 
     void comp_gui_load () {
         spr_v.resize(4);
         tx_v.resize(4);
 
-        box_  = new sf::RectangleShape;
-        text_ = new sf::Text[2];
-        font  = new sf::Font;
+        box_  = new sf::RectangleShape[2];
+        text_ = new sf::Text[3];
+        font  = new sf::Font[2];
 
-        if (!font->loadFromFile(fp::framd_font)) {
+        if (!font->loadFromFile(fp::framd_font) || !font[1].loadFromFile(fp::consola_font)) {
             gbl::end = true;
             return;
         }
@@ -136,6 +195,11 @@ namespace comp {
         float buff_x = 10,  buff_y = 10;
 
         spr_v[0].setScale(double(869)/643, double(869)/643);
+        sf::FloatRect bounds = spr_v[0].getGlobalBounds();
+        spr_v[0].setPosition(gbl::win_size.x/2 - bounds.width/2, gbl::win_size.y/2 - bounds.height/2);
+
+        og_x += spr_v[0].getPosition().x;
+        og_y += spr_v[0].getPosition().y;
 
         spr_v[1].setPosition(og_x, og_y);
         spr_v[1].setScale(double(icon_x)/1024, double(icon_y)/1024);
@@ -147,30 +211,42 @@ namespace comp {
         spr_v[3].setScale(double(icon_x)/512,  double(icon_y)/512);
 
             /////////////////////
+        /// clock - image
+        float c_size_x = 100, c_size_y = 50;
+        box_[1].setSize( sf::Vector2f(c_size_x, c_size_y));
+        //box_[1].setOrigin(c_size_x, 0);
+        box_[1].setPosition(gbl::win_size.x - og_x - c_size_x, og_y);
+        box_[1].setFillColor(sf::Color(0x03, 0xF7, 0xEB));
+
+        text_[2].setColor(sf::Color(0xF1, 0xF1, 0xF1));
+        text_[2].setFont(font[1]);
+        update_clock();
+
+            /////////////////////
         /// text box for time input
-        box_->setPosition(0, 500);
-        box_->setFillColor(sf::Color::Blue);
-        box_->setSize(sf::Vector2f(1600, 50));
+        box_->setPosition(og_x-6, 652);
+        box_->setFillColor(sf::Color(0xC9, 0xDA, 0xEA));
+        box_->setSize(sf::Vector2f(993, 45));
 
             // input
-        text_->setPosition(20, 500);
-        text_->setColor(sf::Color::White);
+        text_->setPosition(og_x, 654);
+        text_->setColor(sf::Color(0x19, 0x15, 0x16));
         text_->setFont(*font);
 
             // output / hint
-        text_[0].setPosition(20, 450);
-        text_[0].setColor(sf::Color(0xF11, 0xF11, 0xF11));
-        text_[0].setFont(*font);
-        text_[0].setString("Input time for action (in minutes)");
+        text_[1].setPosition(og_x, 604);
+        text_[1].setColor(sf::Color(0xF1, 0xF1, 0xF1));
+        text_[1].setFont(*font);
+        //text_[1].setString("Input time for action (in minutes)");  // set on click of icon
         //////////////////////////
 
 
     }
 
     void comp_gui_close () {
-        delete   box_;
+        delete[] box_;
         delete[] text_;
-        delete   font;
+        delete[] font;
 
         tx_v.resize(0);
         tx_v.shrink_to_fit();
@@ -188,71 +264,83 @@ namespace comp {
     void comp(sf::Window& window) {
         gbl::to_draw_p.clear();
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Comma)) {
+        /// Check for 'return'
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
             comp_gui_close();
-            gbl::game_level = room::room;
 
-            std::cout << "comp_close()\nroom()\n";
+            // room should not have closed
+            gbl::game_level = room::room;
             return;
         }
 
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && dt < 0) {
-            //std::cout << "Left Mouse\n";
+        /// check for icon click
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
             sf::Vector2i mosPos = sf::Mouse::getPosition(window);
-            for (int n=1; n < spr_v.size(); ++n) { // skips 0 b/c background
+
+            // check if mosPos is in a sprite (stops after first find)
+            for (int n=1; n < spr_v.size(); ++n) {
+                    // if on sprite (proper icon click
                 if (spr_v[n].getGlobalBounds().contains(mosPos.x, mosPos.y)) {
-                    gbl::event_handle = getText_handler;
-                    func = n;
-                    dt = 0;
-                    std::cout << "click on: " << n << "\n";
-                    break;
+                    func = n; // store which function to use
+                    gbl::event_handle = getText_handler; // start collecting input
+
+                    sf::String input_hint;
+                    switch (func)
+                    {
+                    case 1:
+                        input_hint = "Easy Game: minutes (min: " + gbl::to_string(min::GAME_E_T);
+                        break;
+                    case 2:
+                        input_hint = "Hard Game: minutes (min: " + gbl::to_string(min::GAME_H_T);
+                        break;
+                    case 3:
+                        input_hint = "Chat: minutes (min: " + gbl::to_string(min::CHAT_T);
+                        break;
+                    }
+
+                    text_[1].setString(input_hint + ")");
+
+                    break; // only counts this sprite
                 }
             }
         }
-        else if (dt > 0) {
+
+        // if valid input
+        if (dt > 0) {
             switch (func)
             {
             case 1:
-                if (dt < min::GAME_E_T)
-                    break;
-
-                std::cout << "game_easy()";
                 game_easy(dt);
-                dt = -1;
-                gbl::event_handle = gbl::do_nothing<sf::Event&>;
+                std::cout << "game_easy()\n";
                 break;
             case 2:
-                if (dt < min::GAME_H_T)
-                    break;
-
-                std::cout << "game_hard()";
                 game_hard(dt);
-                dt = -1;
-                gbl::event_handle = gbl::do_nothing<sf::Event&>;
+                std::cout << "game_hard()\n";
                 break;
             case 3:
-                if (dt < min::CHAT_T)
-                    break;
-
-                std::cout << "chat()";
                 chat(dt);
-                dt = -1;
-                gbl::event_handle = gbl::do_nothing<sf::Event&>;
+                std::cout << "chat()\n";
                 break;
             }
+            update_clock();
+            func = 0;
+            dt = -1;
+            gbl::event_handle = gbl::do_nothing<sf::Event&>;
         }
 
-        for (sf::Drawable& obj : spr_v)
-            gbl::to_draw_p.push_back(&obj);
+        // draw typical background and icons
+        for (sf::Sprite& spr : spr_v)
+            gbl::to_draw_p.push_back(&spr);
 
-        if (dt >= 0) {
-            if (input == "bad input")
-                text_->setColor(sf::Color::Red);
-            else if (text_->getColor() == sf::Color::Red)
-                text_->setColor(sf::Color::White);
+        // draw clock
+        gbl::to_draw_p.push_back( box_ + 1);
+        gbl::to_draw_p.push_back(text_ + 2);
 
+        // draw text input box when collecting input
+        if (func != 0) {
             gbl::to_draw_p.push_back(box_);
             gbl::to_draw_p.push_back(text_);
+            gbl::to_draw_p.push_back(text_ + 1);
         }
     }
 }

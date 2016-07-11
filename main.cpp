@@ -12,10 +12,6 @@
 #include "room.h"
 #include "file_paths.h"
 
-void gbl::gl_back () {
-    end = true;
-}
-
 void print_err (const err::Error& err) {
     std::cout << "Error " << err.getFile() << ": " << err.getLine() << "-> "  << err.what();
 }
@@ -24,7 +20,7 @@ void nothing (sf::Event&) {};
 
 int main () {
         //visual window
-    sf::RenderWindow window (sf::VideoMode(1600, 869), "DPMG", sf::Style::Titlebar | sf::Style::Close);
+    sf::RenderWindow window (sf::VideoMode(gbl::win_size.x, gbl::win_size.y), "DPMG", sf::Style::Titlebar | sf::Style::Close);
 
         ///////////////////
     /// TIME STEP variables

@@ -68,7 +68,7 @@ namespace room {
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
             room_gui_close();
-            gbl::gl_back();
+            gbl::end = true;
             return;
         }
 

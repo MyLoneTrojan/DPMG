@@ -28,7 +28,8 @@ namespace fp {
         // base of font
     const string font_f = base_f + "font/";
 
-    const string framd_font = font_f + "framd.ttf";
+    const string   framd_font = font_f + "framd.ttf";
+    const string consola_font = font_f + "consola.ttf";
 }
 
 #endif // FILE_PATHS_H_INCLUDED

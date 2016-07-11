@@ -34,6 +34,17 @@ namespace attr {
                   << "\tSkill: "    << skill   << "\tTime: "   << time;
     }
 
+    std::string get_clock () {
+        int hour   = time / 60;
+        int minute = fmod(time, 60);
+
+        std::string min_ = gbl::to_string(minute);
+        if (min_.size() < 2)
+            min_ = "0" + min_;
+
+        return gbl::to_string(hour) + ":" + min_;
+    }
+
 
     #define attr_mk_inbound(a) { if (a < a ## _min) a = a ## _min; else if (a > a ## _max) a = a ## _max; }
 

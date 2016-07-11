@@ -2,8 +2,10 @@
 #define GLOBAL_H_INCLUDED
 
 /// STD
+#include <string>
 #include <random>
 #include <vector>
+#include <sstream>
 #include <functional>
 
 /// SFML
@@ -18,6 +20,7 @@ namespace gbl {
     // for consistent, predictable 'random' numbers
     std::default_random_engine rand_eng;
 
+    sf::Vector2u win_size = {1600, 869};
     // current meta_point in the game (independent sections of the game, i.e. location)
     std::function<void(sf::Window&)> game_level;
 
@@ -36,6 +39,16 @@ namespace gbl {
     void gl_back ();
 
     std::vector<sf::Drawable*> to_draw_p;
+
+    /// Supplement b/c windows gcc lacks std::to_string
+    template <class T>
+    std::string to_string (T&& num) {
+        std::string param;
+        std::stringstream sstream;
+        sstream << num;
+        sstream >> param;
+        return param;
+    }
 }
 
 #endif
