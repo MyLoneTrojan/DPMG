@@ -40,6 +40,7 @@ namespace comp {
     }
 
     float dt = -1;
+    float clock_align;
     char func = 0;
 
     sf::String          input;
@@ -52,12 +53,13 @@ namespace comp {
         /////////////////
     /// Clock manipulator
     void update_clock () {
-        const float og_x = 50, og_y = 50;
+        const float og_y = 50, x_buff = 10;
         text_[2].setString(attr::get_clock());
 
-        sf::FloatRect c_dimen = text_[2].getGlobalBounds();
+        sf::FloatRect c_dimen = text_[2].getLocalBounds();
+        sf::Vector2f pos = box_[1].getPosition();
 
-        text_[2].setPosition(gbl::win_size.x - og_x - c_dimen.width, og_y);
+        text_[2].setPosition(gbl::win_size.x - clock_align - c_dimen.width - c_dimen.left - x_buff, og_y);
     }
 
 
@@ -213,6 +215,7 @@ namespace comp {
             /////////////////////
         /// clock - image
         float c_size_x = 100, c_size_y = 50;
+        clock_align = og_x;
         box_[1].setSize( sf::Vector2f(c_size_x, c_size_y));
         //box_[1].setOrigin(c_size_x, 0);
         box_[1].setPosition(gbl::win_size.x - og_x - c_size_x, og_y);
@@ -307,18 +310,20 @@ namespace comp {
 
         // if valid input
         if (dt > 0) {
+            int ret = 0; // un-handled currently
+
             switch (func)
             {
             case 1:
-                game_easy(dt);
+                ret = game_easy(dt);
                 std::cout << "game_easy()\n";
                 break;
             case 2:
-                game_hard(dt);
+                ret = game_hard(dt);
                 std::cout << "game_hard()\n";
                 break;
             case 3:
-                chat(dt);
+                ret = chat(dt);
                 std::cout << "chat()\n";
                 break;
             }
