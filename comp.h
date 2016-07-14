@@ -343,7 +343,7 @@ namespace comp {
 
         // draw text input box when collecting input
         if (func != 0) {
-            gbl::to_draw_p.push_back(box_);
+            gbl::to_draw_p.push_back( box_);
             gbl::to_draw_p.push_back(text_);
             gbl::to_draw_p.push_back(text_ + 1);
         }

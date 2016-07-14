@@ -22,7 +22,20 @@ namespace attr {
     float   skill =   0.f,   skill_min =    0,   skill_max =  100;  //    0 to 100
     float    time =   0.f,    time_min =    0,    time_max = 1440;  //    0 to 1440  (24-hour day in minutes)
 
-    std::vector<float> fri_close;
+    std::vector<float>        fri_close;
+    std::vector<txmg::TexPtr> fri_avi;
+    std::vector<std::string>  fri_name;
+
+    /*
+    struct friend_qualities {
+        bool night_owl;
+        float closeness;
+        float trust;
+        float problem;
+    };
+
+    std::vector<friend_qualities> fri_qual;
+    */
 
     /// Neatly print out all attributes
     void print_attr () {
