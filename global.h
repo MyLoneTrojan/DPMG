@@ -20,7 +20,7 @@ namespace gbl {
     // for consistent, predictable 'random' numbers
     std::default_random_engine rand_eng;
 
-    sf::Vector2u win_size = {1600, 869};
+    const sf::Vector2u win_size = {1600, 869};
     // current meta_point in the game (independent sections of the game, i.e. location)
     std::function<void(sf::Window&)> game_level;
 
@@ -36,7 +36,7 @@ namespace gbl {
       ////////////////////////////
     // should be defined in main
     // sets game_level to previous state
-    void gl_back ();
+    //void gl_back ();
 
     std::vector<sf::Drawable*> to_draw_p;
 
